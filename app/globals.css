@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --background: #ffffff;
@@ -6,7 +7,7 @@
 }
 
 .dark {
-  --background: #0a0a0a;
+  --background: #27042c;
   --foreground: #ededed;
 }
 
@@ -17,14 +18,13 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/*
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
-  */
+
 
 ::-webkit-scrollbar {
   width: 8px;
@@ -72,9 +72,3 @@
   transition-duration: 200ms;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}

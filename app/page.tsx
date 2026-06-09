@@ -9,9 +9,11 @@ import { useDarkMode } from '@/app/provider/DarkmodeProvider';
 export default function Home() {
   const [commands, setCommands] = useState<string[]>([]);
   const [currentCommand, setCurrentCommand] = useState("");
+  const [showTooltip, setShowTooltip] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null); //Esto para facilitar autoscroll
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null); //Para manejar el estado de activado/desactivado
 
   //Función de autoresize para el textArea
   const autoResize = () => {
@@ -66,7 +68,7 @@ export default function Home() {
       <div className="flex-shrink-0 flex justify-center items-center min-h-[30vh] px-4 pt-8">
         <div className="max-w-4xl text-center">
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold 
-                         text-gray-600 dark:text-gray-100 
+                         text-gray-900 dark:text-gray-500
                          transition-colors duration-200">
             Bienvenido a AI-MA, haz alguna pregunta relacionada al curso, y buscaremos responderla
           </h2>
@@ -136,14 +138,45 @@ export default function Home() {
           </div>
 
           {/*Sección para el manejo a la hora de enviar mensajes*/}
+          
           <div className='container mx-auto px-4 py-2 flex justify-end items-center'>
             <button
-              onClick={sendCommand}
-              className="cursor-pointer bg-blue-800 hover:bg-blue-400  rounded-3xl px-3 py-3"
-            >
+                ref={buttonRef}
+                onClick={sendCommand}
+                disabled={!currentCommand.trim()}
+                onMouseEnter={() => !currentCommand.trim() && setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+                className={`
+                  rounded-full px-4 py-3 transition-all duration-200
+                  flex items-center justify-center
+                  ${currentCommand.trim() 
+                    ? 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 shadow-md hover:shadow-lg transform hover:scale-105 cursor-pointer' 
+                    : 'bg-gray-300 dark:bg-gray-700 cursor-not-allowed opacity-60'
+                  }
+                `}
+              >
               <PaperAirplaneIcon className={`size-6 ${currentCommand.trim() ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`}/>
             </button>
+
+            {/*Tooltip*/}
+            {showTooltip && !currentCommand.trim() && (
+              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50">
+                <div className="bg-gray-900 dark:bg-gray-800 text-white text-sm rounded-lg py-2 px-3 whitespace-nowrap shadow-lg">
+                  Tienes que escribir al menos algo para enviar un mensaje
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2">
+                    <div className="border-4 border-transparent border-t-gray-900 dark:border-t-gray-800"></div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
+        </div>
+
+        {/* User hint */}
+        <div className="mt-2 text-center">
+          <span className="text-xs text-gray-400 dark:text-gray-500">
+            Presiona Enter para enviar, Shift+Enter para nueva línea
+          </span>
         </div>
       </div>
 
