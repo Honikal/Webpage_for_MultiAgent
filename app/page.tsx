@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
-import { BottomBar } from "@/web-components/BottomBarComponent";
-import { Message } from "@/web-components/Message";
+import { BottomBar } from "@/app/web-components/BottomBarComponent";
+import { Message } from "@/app/web-components/Message";
 
 type MessageType = {
   id: string;
@@ -19,8 +19,6 @@ export default function Home() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null); //Esto para facilitar autoscroll
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-
-  
 
   //Función encargada de enviar el comando
   const sendCommand = async() => {
