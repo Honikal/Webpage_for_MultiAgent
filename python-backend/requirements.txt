@@ -1,0 +1,14 @@
+langchain==0.3.25
+langchain-community==0.3.24
+langchain-openai==0.3.19
+langgraph==0.4.7
+chromadb==0.5.23
+pypdf==5.5.0
+sentence-transformers==4.1.0
+langfuse>=3.0.0
+python-dotenv>=1.0.1
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-dotenv==1.0.1
+pydantic==2.10.3
+httpx==0.28.1

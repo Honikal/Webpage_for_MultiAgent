@@ -24,6 +24,15 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# backend
+python-backend/chroma_db/
+python-backend/__pycache__/
+python-backend/src/__pycache__/
+python-backend/vector_db_v2
+python-backend/venv/
+python-backend/.env
+python-backend/*.pyc
+
 # local env files
 .env*.local
 .env
