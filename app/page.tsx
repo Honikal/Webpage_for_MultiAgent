@@ -24,13 +24,16 @@ export default function Home() {
   const sendCommand = async() => {
     if (!currentCommand.trim()) return; // No enviar mensajes vacíos
 
-    console.log("Comando enviado");
+    //Extraemos la pregunta
+    const userQuestion = currentCommand.trim();
+
     const userMessage: MessageType = {
       id: Date.now().toString(),
-      text: currentCommand.trim(),
+      text: userQuestion,
       sender: "user",
       timestamp: new Date(),
     }
+
 
     //A la hora de enviar un comando, nosotros hacemos un append a nuestra lista de comandos
     setMessages((prevCommands) => [...prevCommands, userMessage]);
@@ -38,6 +41,51 @@ export default function Home() {
     setIsLoading(true);
 
     //TODO Llamado al API del agente
+    try {
+      //Hacemos llamada a nuestro API
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          question: userQuestion,
+        }),
+      });
+      
+      //Checamos el caso de la respuesta
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error al obtener respuesta');
+      }
+
+      const data = await response.json();
+      console.log("Respuesta recibida:")
+
+      //Creamos el mensaje de IA y lo agregamos
+      const IA_response : MessageType = {
+        id: (Date.now() + 1).toString(),
+        text: data.answer,  //Data.answer contiene la respuesta
+        sender: "ai",
+        timestamp: new Date()
+      };
+      setMessages((prev) => [...prev, IA_response]);
+
+    } catch (error) {
+      console.error("Error con la comunicación con la API");
+
+      //Extraemos mensaje de error
+      const errorMessage: MessageType = {
+        id: (Date.now() + 1).toString(),
+        text: "Lo siento, hubo un error al procesar tu pregunta. Por favor, verifica que el servidor backend esté corriendo en http://localhost:8000",
+        sender: "ai",
+        timestamp: new Date(),
+      };
+
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   //Manejamos el caso de autoscroll a moverse al final de los mensajes al cambiarse el área de mensajes

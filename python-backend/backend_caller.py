@@ -137,17 +137,6 @@ async def ask_rag_only(request: QuestionRequest):
         )
     
     try:
-        print(f"🔍 Searching for: {request.question}")
-        # First, testeamos si vector_db tiene documentos
-        try:
-            # Try a simple similarity search first
-            test_docs = vector_db.similarity_search("test", k=1)
-            print(f"Vector DB has documents: {len(test_docs) > 0}")
-            if len(test_docs) > 0:
-                print(f"Sample document: {test_docs[0].page_content[:100]}...")
-        except Exception as e:
-            print(f"Error checking vector DB: {e}")
-
         answer, docs = rag_answer(
             request.question, 
             vector_db, 
@@ -155,11 +144,7 @@ async def ask_rag_only(request: QuestionRequest):
             callbacks=callbacks if request.use_langfuse else None
         )
 
-        print(f"Number of documents retrieved: {len(docs)}")
-        print(f"Answer length: {len(answer)} characters")
-        
         sources = []
-        print(f"Tamaño del doc: {docs} (tipo del doc: {type(docs)})")
         for doc in docs:
             sources.append({
                 "content": doc.page_content[:300] + "..." if len(doc.page_content) > 300 else doc.page_content,
