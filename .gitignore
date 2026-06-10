@@ -33,6 +33,9 @@ python-backend/venv/
 python-backend/.env
 python-backend/*.pyc
 
+#files
+documents
+
 # local env files
 .env*.local
 .env

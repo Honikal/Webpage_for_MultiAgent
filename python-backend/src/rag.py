@@ -32,6 +32,7 @@ def rag_answer(
 ) -> tuple[str, list]:
     """Responde una pregunta usando recuperación semántica + LLM."""
     docs = vector_db.similarity_search(question, k=k)
+    print_sources(docs)
     context = build_context(docs)
     prompt = build_rag_prompt(question, context)
 

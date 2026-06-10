@@ -68,10 +68,16 @@ Luego instala dependencias y construye la base vectorial:
 python -m src.build_index
 ```
 
-Para probar el orquestador:
+Luego de instalar dependencias, nos toca montar el servidor:
 
 ```bash
-python -m src.main
+python -m backend_caller
+```
+
+Para probar el que esté funcionando, en otra terminal usar:
+
+```bash
+python -m test_api
 ```
 
 También puedes usarlo desde una celda:

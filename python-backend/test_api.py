@@ -47,6 +47,41 @@ def test_ask():
         print(f"❌ Test failed: {e}")
         return False
 
+def test_ask_rag():
+    """Test the ask-rag endpoint."""
+    question = "¿Qué es una red neuronal?"
+    
+    try:
+        print(f"\nSending question: {question}")
+        response = requests.post(
+            "http://localhost:8000/ask-rag",
+            json={"question": question, "use_langfuse": False},
+            timeout=60  # 60 second timeout for RAG response
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            print(f"✅ Success!")
+            print(f"Answer: {data['answer'][:300]}...")
+            print(f"Sources found: {len(data['sources'])}")
+        
+            # Print source details if any
+            if data['sources']:
+                print("\n📖 Sources:")
+                for i, source in enumerate(data['sources'][:2], 1):  # Show first 2 sources
+                    print(f"  {i}. {source['content'][:100]}...")
+            return True
+        else:
+            print(f"❌ Error: {response.status_code}")
+            print(response.text)
+            return False
+    except requests.exceptions.Timeout:
+        print("❌ Request timed out. The LLM might be taking too long.")
+        return False
+    except Exception as e:
+        print(f"❌ Test failed: {e}")
+        return False
+
 if __name__ == "__main__":
     print("=" * 50)
     print("Testing AI-MA RAG Agent API")
@@ -62,6 +97,12 @@ if __name__ == "__main__":
         exit(1)
     
     if test_ask():
+        print("\n✅ Ask endpoint works!")
+    else:
+        print("\n❌ Ask endpoint failed.")
+        exit(1)
+
+    if test_ask_rag():
         print("\n✅ Ask endpoint works!")
     else:
         print("\n❌ Ask endpoint failed.")
