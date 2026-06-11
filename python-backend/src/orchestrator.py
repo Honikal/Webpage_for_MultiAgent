@@ -45,7 +45,10 @@ def rag_node_factory(vector_db, llm, callbacks: list | None = None):
             llm=llm,
             callbacks=callbacks,
         )
-        return {"answer": answer}
+        return {
+            "answer": answer,
+            "sources": _docs
+        }
 
     return rag_node
 
@@ -56,7 +59,10 @@ def direct_node_factory(llm, callbacks: list | None = None):
     def direct_node(state: AgentState):
         config = {"callbacks": callbacks} if callbacks else None
         response = llm.invoke(state["question"], config=config)
-        return {"answer": response.content}
+        return {
+            "answer": response.content,
+            "sources": []
+        }
 
     return direct_node
 

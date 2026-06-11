@@ -28,9 +28,7 @@ def get_absolute_path(relative_path: str) -> str:
 
 # Obtener valores raw del .env y las convertimos en valores absolutos
 pdf_folder_raw = os.getenv("PDF_FOLDER")
-vector_db_dir_raw = os.getenv("VECTOR_DB_DIR")
 pdf_folder = get_absolute_path(pdf_folder_raw)
-vector_db_dir = get_absolute_path(vector_db_dir_raw)
 
 @dataclass(frozen=True)
 class Settings:
@@ -38,7 +36,7 @@ class Settings:
 
     openai_api_key: str | None = os.getenv("OPENAI_API_KEY")
     pdf_folder: str = pdf_folder
-    vector_db_dir: str = vector_db_dir
+    vector_db_dir: str = os.getenv("VECTOR_DB_DIR")
     embedding_model_name: str = os.getenv(
         "EMBEDDING_MODEL_NAME",
         "sentence-transformers/all-MiniLM-L6-v2",

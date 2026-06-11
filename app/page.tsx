@@ -1,15 +1,20 @@
 'use client';
 
-import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { BottomBar } from "@/app/web-components/BottomBarComponent";
 import { Message } from "@/app/web-components/Message";
+import { ChatResponse, sendMessageToAgent } from "./api/chat/chatService";
 
 type MessageType = {
   id: string;
   text: string;
   sender: 'user' | 'ai';
   timestamp: Date;
+  mode?: 'RAG' | 'DIRECT' | 'WEB';
+  sources?: Array<{
+    content: string;
+    metadata: Record<string, any>;
+  }>;
 };
 
 export default function Home() {
@@ -42,32 +47,20 @@ export default function Home() {
 
     //TODO Llamado al API del agente
     try {
-      //Hacemos llamada a nuestro API
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          question: userQuestion,
-        }),
-      });
-      
-      //Checamos el caso de la respuesta
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error al obtener respuesta');
-      }
+      //Usamos nuestro archivo chatService.ts para el servicio de comunicación
+      const response: ChatResponse = await sendMessageToAgent(userQuestion);
+      console.log("Respuesta recibida:");
+      console.log("Modo utilizado:", response.mode);
+      console.log("Fuentes:", response.sources?.length || 0);
 
-      const data = await response.json();
-      console.log("Respuesta recibida:")
-
-      //Creamos el mensaje de IA y lo agregamos
+      //Creamos el mensaje de IA con modo y fuentes en caso de tenerlas
       const IA_response : MessageType = {
         id: (Date.now() + 1).toString(),
-        text: data.answer,  //Data.answer contiene la respuesta
+        text: response.answer,  //Data.answer contiene la respuesta
         sender: "ai",
-        timestamp: new Date()
+        timestamp: new Date(),
+        mode: response.mode,
+        sources: response.sources
       };
       setMessages((prev) => [...prev, IA_response]);
 
@@ -80,6 +73,7 @@ export default function Home() {
         text: "Lo siento, hubo un error al procesar tu pregunta. Por favor, verifica que el servidor backend esté corriendo en http://localhost:8000",
         sender: "ai",
         timestamp: new Date(),
+        mode: "DIRECT"
       };
 
       setMessages((prev) => [...prev, errorMessage]);
@@ -120,6 +114,8 @@ export default function Home() {
                 sender={message.sender}
                 index={index}
                 timestamp={message.timestamp}
+                mode={message.mode}
+                sources={message.sources}
               />
             ))}
 
